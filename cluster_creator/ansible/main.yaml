@@ -1,0 +1,95 @@
+---
+- hosts: cc
+  vars_files:
+    - users.yaml
+  vars:
+    script_directory: "/opt/cc"
+
+  tasks:
+    - name: Populate scripts and templates
+      block:
+        - name: Create script directory
+          become: yes
+          file:
+            path: "{{ script_directory }}"
+            state: directory
+            mode: a+rx
+
+        - name: Create aws-install-config.yaml
+          become: yes
+          template:
+            src: templates/aws-install-config.yaml.j2
+            dest: "{{ script_directory }}/aws-install-config.yaml"
+            mode: a+rx
+
+        - name: Create setup_cluster.sh
+          become: yes
+          copy:
+            src: templates/setup_cluster.sh
+            dest: "{{ script_directory }}/setup_cluster.sh"
+            mode: a+rx
+          register: setup_cluster
+
+        - name: debugging script
+          become: yes
+          copy:
+            src: templates/test.sh
+            dest: "{{ script_directory }}/test.sh"
+            mode: a+rx
+          register: test
+
+    - name: Install packages
+      become: yes
+      dnf:
+        name:
+          - podman
+          - skopeo
+          - jq
+          - mailx
+          - sendmail
+
+    - name: Start sendmail daemon
+      systemd:
+        name: sendmail
+        state: start
+
+    - name: User setup
+      block:
+        - name: Create user
+          with_items:  "{{ users }}"
+          become: yes
+          user:
+            name: "{{ item.name }}"
+            state: present
+            groups: " {{item.groups }}"
+
+        - name: Set user login key
+          with_items:  "{{ users }}"
+          become: yes
+          become_user: "{{ item.name }}"
+          authorized_key:
+            user: "{{ item.name }}"
+            state: present
+            key: "{{ item.key }}"
+
+        - name: Change email to mail cron results to
+          become: yes
+          become_user: "{{ item.name }}"
+          with_items:  "{{ users }}"
+          cronvar:
+            name: EMAIL
+            value: "{{ item.email }}"
+            user: "{{ item.name }}"
+
+        - name: Create cluster creation job
+          with_items:  "{{ users }}"
+          become: yes
+          become_user: "{{ item.name }}"
+          cron:
+            name: "create cluster"
+            day: "*"
+            hour: "3"
+            minute: "0"
+            month: "*"
+            job: "{{ setup_cluster.dest }}"
+            user: "{{ item.name }}"

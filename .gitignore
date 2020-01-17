@@ -1,0 +1,4 @@
+.terraform
+*.tfstate*
+users.yaml
+hosts
