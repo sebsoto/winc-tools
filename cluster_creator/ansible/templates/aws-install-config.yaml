@@ -25,4 +25,4 @@ platform:
   aws:
     region: us-east-1
 pullSecret: ''
-sshKey: {{ public_key }}
+sshKey: ''

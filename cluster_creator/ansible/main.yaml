@@ -17,8 +17,8 @@
 
         - name: Create aws-install-config.yaml
           become: yes
-          template:
-            src: templates/aws-install-config.yaml.j2
+          copy:
+            src: templates/aws-install-config.yaml
             dest: "{{ script_directory }}/aws-install-config.yaml"
             mode: a+rx
 
@@ -47,11 +47,6 @@
           - jq
           - mailx
           - sendmail
-
-    - name: Start sendmail daemon
-      systemd:
-        name: sendmail
-        state: started
 
     - name: User setup
       block:
