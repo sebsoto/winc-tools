@@ -51,7 +51,7 @@
     - name: Start sendmail daemon
       systemd:
         name: sendmail
-        state: start
+        state: started
 
     - name: User setup
       block:
@@ -88,8 +88,8 @@
           cron:
             name: "create cluster"
             day: "*"
-            hour: "3"
-            minute: "0"
+            hour: "0"
+            minute: "5"
             month: "*"
             job: "{{ setup_cluster.dest }}"
             user: "{{ item.name }}"
