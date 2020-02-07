@@ -19,7 +19,9 @@ users:
 
 Run ansible playbook
 
-Each user should log in with their ssh key and populate ~/.pull-secret.json with their full OpenShift pull secret
+Each user should log in with their ssh key and:
+* populate ~/.pull-secret.json with their full OpenShift pull secret.
+* populate the ~/.aws directory accordingly
 
 Every day at 3am a new cluster will be created for the user in ~/clusters/aws
 
