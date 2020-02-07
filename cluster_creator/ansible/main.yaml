@@ -15,6 +15,13 @@
             state: directory
             mode: a+rx
 
+        - name: Create resize_disk.sh
+          become: yes
+          copy:
+            src: templates/resize_disk.sh
+            dest: "{{ script_directory }}/resize_disk.sh"
+            mode: a+rx
+
         - name: Create aws-install-config.yaml
           become: yes
           copy:
@@ -37,6 +44,15 @@
             dest: "{{ script_directory }}/test.sh"
             mode: a+rx
           register: test
+
+    - name: Get home directory size
+      shell: "df -h |grep /dev/mapper/rootvg-homelv |awk {'print $2'}"
+      register: directory_sz
+
+    - name: Ensure home directory size was increased
+      become: yes
+      shell: "{{ script_directory }}/resize_disk.sh"
+      when: '"51G" not in directory_sz.stdout'
 
     - name: Install packages
       become: yes
