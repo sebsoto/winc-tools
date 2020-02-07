@@ -1,4 +1,5 @@
 set -e
+SYSTEM_OC=/bin/oc
 BINARY_DIR=~/.local/bin
 CLUSTER_DIR=~/clusters
 CLUSTER_NAME="$(whoami)-$(date +%m-%d-%y)"
@@ -6,7 +7,7 @@ PULL_SECRET=~/.pull-secret.json
 mkdir -p $BINARY_DIR
 
 # Get latest oc and openshift-install binaries
-/usr/local/bin/oc adm release extract -a $PULL_SECRET --command=oc registry.svc.ci.openshift.org/ocp/release:4.4 --to $BINARY_DIR
+$SYSTEM_OC adm release extract -a $PULL_SECRET --command=oc registry.svc.ci.openshift.org/ocp/release:4.4 --to $BINARY_DIR
 $BINARY_DIR/oc adm release extract -a $PULL_SECRET --command=openshift-install registry.svc.ci.openshift.org/ocp/release:4.4 --to $BINARY_DIR
 
 # Create the cluster directory

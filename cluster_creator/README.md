@@ -29,5 +29,3 @@ Every day at 3am a new cluster will be created for the user in ~/clusters/aws
 * azure blocks outgoing smtp to mail providers, so sending emails isnt possible unless a mail relay is setup
 
 * add destroying cluster job as well
-
-* get latest oc onto the server at provision stage

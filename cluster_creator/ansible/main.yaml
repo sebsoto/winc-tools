@@ -64,6 +64,13 @@
           - mailx
           - sendmail
 
+    - name: Get latest oc binary
+      become: yes
+      unarchive:
+        src: https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+        dest: /bin
+        remote_src: yes
+
     - name: User setup
       block:
         - name: Create user
